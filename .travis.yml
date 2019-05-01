@@ -8,9 +8,9 @@ env:
 
 install:
     - docker pull elementary/docker:stable
-    - docker run -v "$PWD":/tmp/build-dir elementary/docker:juno-stable /bin/sh -c "apt-get update && apt-get -y install $DEPENDENCY_PACKAGES && cd /tmp/build-dir && meson build && cd build && ninja test"
-    - docker pull elementary/docker:juno-unstable
-    - docker run -v "$PWD":/tmp/build-dir elementary/docker:juno-unstable /bin/sh -c "apt-get update && apt-get -y install $DEPENDENCY_PACKAGES && cd /tmp/build-dir && rm -rf build && meson build && cd build && ninja test"
+    - docker run -v "$PWD":/tmp/build-dir elementary/docker:stable /bin/sh -c "apt-get update && apt-get -y install $DEPENDENCY_PACKAGES && cd /tmp/build-dir && meson build && cd build && ninja test"
+    - docker pull elementary/docker:unstable
+    - docker run -v "$PWD":/tmp/build-dir elementary/docker:unstable /bin/sh -c "apt-get update && apt-get -y install $DEPENDENCY_PACKAGES && cd /tmp/build-dir && rm -rf build && meson build && cd build && ninja test"
 
 script:
     - echo BUILDS PASSED
