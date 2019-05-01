@@ -1,0 +1,16 @@
+language: generic
+
+services:
+    - docker
+
+env:
+    - DEPENDENCY_PACKAGES="libglib2.0-dev libjson-glib-dev libsoup2.4-dev libgee-0.8-dev libvala-0.40-dev meson valac"
+
+install:
+    - docker pull elementary/docker:stable
+    - docker run -v "$PWD":/tmp/build-dir elementary/docker:stable /bin/sh -c "apt-get update && apt-get -y install $DEPENDENCY_PACKAGES && cd /tmp/build-dir && meson build && cd build && ninja test"
+    - docker pull elementary/docker:unstable
+    - docker run -v "$PWD":/tmp/build-dir elementary/docker:unstable /bin/sh -c "apt-get update && apt-get -y install $DEPENDENCY_PACKAGES && cd /tmp/build-dir && rm -rf build && meson build && cd build && ninja test"
+
+script:
+    - echo BUILDS PASSED
