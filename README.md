@@ -1,3 +1,5 @@
+[![Discord](https://img.shields.io/badge/discord-OpenXbox-blue.svg)](https://discord.gg/E8kkJhQ)
+
 # xbox-webapi-vala
 
 Xbox WebApi client in Vala
