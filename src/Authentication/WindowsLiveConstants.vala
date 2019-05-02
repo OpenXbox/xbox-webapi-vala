@@ -34,4 +34,7 @@ namespace XboxWebApi.Authentication.WindowsLiveConstants {
 
     public const string USER_AUTH_URL = "https://user.auth.xboxlive.com";
     public const string USER_AUTH_AUTHENTICATE_PATH = "/user/authenticate";
+
+    public const string XSTS_AUTH_URL = "https://xsts.auth.xboxlive.com";
+    public const string XSTS_AUTH_AUTHENTICATE_PATH = "/xsts/authorize";
 }

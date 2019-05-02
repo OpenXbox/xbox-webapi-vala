@@ -43,19 +43,44 @@ namespace XboxWebApi.Authentication.Model {
 
             DisplayClaims = new HashTable<string, Array<XboxUserInformation>> (str_hash, str_equal);
 
+            var user_informations = new Array<XboxUserInformation>  ();
             root_object.get_object_member("DisplayClaims")
-                .foreach_member((object, name, node) => {
-                    var user_informations = new Array<XboxUserInformation>  ();
-
+                .foreach_member((dc_object, dc_name, dc_node) => {
                     XboxUserInformation user_information = new XboxUserInformation();
-                    user_information.user_hash = node.get_array()
-                        .get_element(0)
-                        .get_object()
-                        .get_string_member ("uhs");
+                    var xui = dc_node.get_array().get_element(0).get_object();
+
+                    xui.foreach_member((xui_object, xui_name, xui_node) => {
+                        switch (xui_name) {
+                            case "agg":
+                                user_information.age_group = xui_node.get_string();
+                                break;
+                            case "gtg":
+                                user_information.gamertag = xui_node.get_string();
+                                break;
+                            case "prv":
+                                user_information.privileges = xui_node.get_string();
+                                break;
+                            case "usr":
+                                user_information.user_settings_restrictions = xui_node.get_string();
+                                break;
+                            case "utr":
+                                user_information.user_title_restrictions = xui_node.get_string();
+                                break;
+                            case "xid":
+                                user_information.xbox_user_id = xui_node.get_string();
+                                break;
+                            case "uhs":
+                                user_information.user_hash = xui_node.get_string();
+                                break;
+
+                            default:
+                                debug ("unhandled property: %s", xui_name);
+                                break;
+                        }
+                    });
 
                     user_informations.append_val(user_information);
-
-                    DisplayClaims.insert(name, user_informations);
+                    DisplayClaims.insert(dc_name, user_informations);
                 });
         }
 
