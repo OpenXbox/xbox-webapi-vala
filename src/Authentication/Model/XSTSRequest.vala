@@ -27,15 +27,9 @@ namespace XboxWebApi.Authentication.Model {
         public string token_type { get; internal set; default="JWT"; }
         public string sandbox_id { get; internal set; default="RETAIL"; }
         public UserToken user_token { get; set; }
-        public DeviceToken device_token { get; set; }
-        public TitleToken title_token { get; set; }
 
-        public XSTSRequest.with_tokens (UserToken user_token,
-                            DeviceToken? device_token,
-                            TitleToken? title_token) {
+        public XSTSRequest.with_tokens (UserToken user_token) {
             this.user_token = user_token;
-            this.device_token = device_token;
-            this.title_token = title_token;
         }
 
         public string to_json () {
@@ -58,17 +52,6 @@ namespace XboxWebApi.Authentication.Model {
             builder.begin_array ();
             builder.add_string_value (user_token.jwt);
             builder.end_array ();
-
-            if (device_token != null) {
-                builder.set_member_name("DeviceToken");
-                builder.add_string_value(device_token.jwt);
-            }
-
-            if (title_token != null) {
-                builder.set_member_name("TitleToken");
-                builder.add_string_value(title_token.jwt);
-
-            }
 
             builder.end_object ();
             builder.end_object ();

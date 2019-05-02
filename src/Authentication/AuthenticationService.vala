@@ -28,8 +28,6 @@ namespace XboxWebApi.Authentication {
         public AccessToken access_token { get; set; }
         public RefreshToken refresh_token { get; set; }
         public UserToken user_token { get; set; }
-        public DeviceToken device_token { get; set; }
-        public TitleToken title_token { get; set; }
         public XToken x_token { get; set; }
         public XboxUserInformation user_information { get; set; }
 
@@ -53,8 +51,7 @@ namespace XboxWebApi.Authentication {
                 access_token = new AccessToken.from_windows_live_response (response);
                 refresh_token = new RefreshToken.from_windows_live_response (response);
                 user_token = authenticate_xasua(access_token);
-                x_token = authenticate_xsts (user_token, device_token, title_token);
-                debug (x_token.to_string ());
+                x_token = authenticate_xsts (user_token);
                 return true;
             } catch (Error e) {
                 debug ("ERROR: %s", e.message);
@@ -92,15 +89,14 @@ namespace XboxWebApi.Authentication {
             return new UserToken.from_xasresponse (xasr);
         }
 
-        private XToken authenticate_xsts (UserToken user_token, DeviceToken? device_token, TitleToken? title_token) throws Error {
+        private XToken authenticate_xsts (UserToken user_token) throws Error {
             var session = new Soup.Session ();
         	
             Soup.Logger logger = new Soup.Logger (Soup.LoggerLogLevel.BODY, -1);	
 	        session.add_feature (logger);
 
             var url = build_xsts_authenticate_url();
-            var request_data = new XSTSRequest.with_tokens(user_token, device_token, title_token).to_json();
-            debug ("XSTS request: %s\n", request_data);
+            var request_data = new XSTSRequest.with_tokens(user_token).to_json();
 
             var message = new Soup.Message("POST", url);
             message.request_headers.append("x-xbl-contract-version", "1");
