@@ -23,7 +23,7 @@ using XboxWebApi.Authentication.Model;
 
 namespace XboxWebApi.Authentication.Token {
     public class XToken : BaseAuthToken {
-        public UserToken.from_xasresponse (XASResponse token_response) {
+        public XToken.from_xasresponse (XASResponse token_response) {
             jwt = token_response.Token;
             issued = token_response.IssueInstant;
             expires = token_response.NotAfter;
