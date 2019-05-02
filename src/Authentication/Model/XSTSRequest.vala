@@ -19,44 +19,65 @@
  * Authored by: Gabriel Fróes Franco <gffranco@gmail.com>
  */
 
-using Gee;
 using XboxWebApi.Authentication.Token;
 
 namespace XboxWebApi.Authentication.Model {
-    public class XSTSRequest {
-        public string relying_party { get; internal set; }
-        public string token_type { get; internal set; }
-        public XSTSProperties properties { get; internal set; }
+    public class XSTSRequest : Object {
+        public string relying_party { get; internal set; default="http://xboxlive.com"; }
+        public string token_type { get; internal set; default="JWT"; }
+        public string sandbox_id { get; internal set; default="RETAIL"; }
+        public UserToken user_token { get; set; }
+        public DeviceToken device_token { get; set; }
+        public TitleToken title_token { get; set; }
 
-        public XSTSRequest (UserToken user_token,
-                            string relying_party = "http://xboxlive.com",
-                            string token_type = "JWT",
-                            string sandbox_id = "RETAIL",
-                            DeviceToken device_token,
-                            TitleToken title_token) {
-            this.relying_party = relying_party;
-            this.token_type = token_type;
-            this.properties = new XSTSProperties (user_token.jwt,
-                                                  sandbox_id,
-                                                  device_token.jwt,
-                                                  title_token.jwt);
-        }
-    }
-
-    public class XSTSProperties {
-        public string[] user_tokens { get; set; }
-        public string sandbox_id { get; set; }
-        public string device_token { get; set; }
-        public string title_token { get; set; }
-
-        public XSTSProperties (string user_token,
-                               string sandbox_id,
-                               string device_token,
-                               string title_token) {
-            this.user_tokens = { user_token };
-            this.sandbox_id = sandbox_id;
+        public XSTSRequest.with_tokens (UserToken user_token,
+                            DeviceToken? device_token,
+                            TitleToken? title_token) {
+            this.user_token = user_token;
             this.device_token = device_token;
             this.title_token = title_token;
+        }
+
+        public string to_json () {
+            Json.Builder builder = new Json.Builder ();
+
+            builder.begin_object ();
+            builder.set_member_name ("RelyingParty");
+            builder.add_string_value (relying_party);
+            
+            builder.set_member_name ("TokenType");
+            builder.add_string_value (token_type);
+
+            builder.set_member_name ("SandboxId");
+            builder.add_string_value (sandbox_id);
+
+            builder.set_member_name ("Properties");
+            builder.begin_object ();
+
+            builder.set_member_name ("UserTokens");
+            builder.begin_array ();
+            builder.add_string_value (user_token.jwt);
+            builder.end_array ();
+
+            if (device_token != null) {
+                builder.set_member_name("DeviceToken");
+                builder.add_string_value(device_token.jwt);
+            }
+
+            if (title_token != null) {
+                builder.set_member_name("TitleToken");
+                builder.add_string_value(title_token.jwt);
+
+            }
+
+            builder.end_object ();
+            builder.end_object ();
+
+            Json.Generator generator = new Json.Generator ();
+            Json.Node root = builder.get_root ();
+            generator.set_root (root);
+
+            return generator.to_data (null);
         }
     }
 }

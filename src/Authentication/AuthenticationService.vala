@@ -19,13 +19,12 @@
  * Authored by: Gabriel Fróes Franco <gffranco@gmail.com>
  */
 
-using Json;
 using Soup;
 using XboxWebApi.Authentication.Model;
 using XboxWebApi.Authentication.Token;
 
 namespace XboxWebApi.Authentication {
-    public class AuthenticationService {
+    public class AuthenticationService : Object {
         public AccessToken access_token { get; set; }
         public RefreshToken refresh_token { get; set; }
         public UserToken user_token { get; set; }
@@ -54,10 +53,11 @@ namespace XboxWebApi.Authentication {
                 access_token = new AccessToken.from_windows_live_response (response);
                 refresh_token = new RefreshToken.from_windows_live_response (response);
                 user_token = authenticate_xasua(access_token);
-                debug (user_token.to_string ());
+                x_token = authenticate_xsts (user_token, device_token, title_token);
+                debug (x_token.to_string ());
                 return true;
             } catch (Error e) {
-                debug("ERRO: %s", e.message);
+                debug ("ERROR: %s", e.message);
                 return false;
             }
         }
@@ -92,20 +92,46 @@ namespace XboxWebApi.Authentication {
             return new UserToken.from_xasresponse (xasr);
         }
 
-        private string build_user_authenticate_url() {
+        private XToken authenticate_xsts (UserToken user_token, DeviceToken? device_token, TitleToken? title_token) throws Error {
+            var session = new Soup.Session ();
+        	
+            Soup.Logger logger = new Soup.Logger (Soup.LoggerLogLevel.BODY, -1);	
+	        session.add_feature (logger);
+
+            var url = build_xsts_authenticate_url();
+            var request_data = new XSTSRequest.with_tokens(user_token, device_token, title_token).to_json();
+            debug ("XSTS request: %s\n", request_data);
+
+            var message = new Soup.Message("POST", url);
+            message.request_headers.append("x-xbl-contract-version", "1");
+            message.set_request ("application/json", MemoryUse.COPY, request_data.data);
+            session.send_message (message);
+
+            XASResponse xasr = new XASResponse.from_json ((string) message.response_body.data);
+
+            return new XToken.from_xasresponse(xasr);
+        }
+
+        private string build_xsts_authenticate_url () {
+            URI uri = new URI (WindowsLiveConstants.XSTS_AUTH_URL);
+            uri.set_path (WindowsLiveConstants.XSTS_AUTH_AUTHENTICATE_PATH);
+            return uri.to_string(false);
+        }
+
+        private string build_user_authenticate_url () {
             URI uri = new URI(WindowsLiveConstants.USER_AUTH_URL);
             uri.set_path(WindowsLiveConstants.USER_AUTH_AUTHENTICATE_PATH);
             return uri.to_string(false);
         }
 
-        private string build_refresh_token_url(RefreshToken refresh_token) {
+        private string build_refresh_token_url (RefreshToken refresh_token) {
             URI uri = new URI(WindowsLiveConstants.LOGIN_SERVICE_URL);
             uri.set_path(WindowsLiveConstants.LOGIN_REFRESH_TOKEN_PATH);
             uri.set_query_from_form(new WindowsLiveRefreshQuery(refresh_token).get_query());
             return uri.to_string(false);
         }
 
-        public string get_authentication_url() {
+        public static string get_authentication_url () {
             URI uri = new URI(WindowsLiveConstants.LOGIN_SERVICE_URL);
             uri.set_path(WindowsLiveConstants.LOGIN_AUTHORIZE_PATH);
             uri.set_query_from_form(new WindowsLiveAuthenticationQuery().get_query());
