@@ -1,4 +1,4 @@
-[![Discord](https://img.shields.io/badge/discord-OpenXbox-blue.svg)](https://discord.gg/E8kkJhQ)
+[![Discord](https://img.shields.io/badge/discord-OpenXbox-blue.svg)](https://openxbox.org/discord)
 [![Build Status](https://travis-ci.com/OpenXbox/xbox-webapi-vala.svg?branch=master)](https://travis-ci.com/OpenXbox/xbox-webapi-vala)
 
 # xbox-webapi-vala
