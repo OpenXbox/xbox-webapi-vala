@@ -32,9 +32,9 @@ namespace XboxWebApi.Authentication.WindowsLiveConstants {
     public const string LOGIN_REFRESH_TOKEN_PATH = "/oauth20_token.srf";
     public const string LOGIN_SERVICE_URL = "https://login.live.com";
 
-    public const string USER_AUTH_URL = "https://user.auth.xboxlive.com";
     public const string USER_AUTH_AUTHENTICATE_PATH = "/user/authenticate";
+    public const string USER_AUTH_SERVICE_URL = "https://user.auth.xboxlive.com";
 
-    public const string XSTS_AUTH_URL = "https://xsts.auth.xboxlive.com";
-    public const string XSTS_AUTH_AUTHENTICATE_PATH = "/xsts/authorize";
+    public const string XSTS_AUTH_AUTHORIZE_PATH = "/xsts/authorize";
+    public const string XSTS_AUTH_SERVICE_URL = "https://xsts.auth.xboxlive.com";
 }

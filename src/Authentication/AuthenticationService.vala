@@ -45,6 +45,13 @@ namespace XboxWebApi.Authentication {
             this.refresh_token = refresh_token;
         }
 
+        public static string get_authentication_url () {
+            URI uri = new URI(WindowsLiveConstants.LOGIN_SERVICE_URL);
+            uri.set_path(WindowsLiveConstants.LOGIN_AUTHORIZE_PATH);
+            uri.set_query_from_form(new WindowsLiveAuthenticationQuery().get_query());
+            return uri.to_string(false);
+        }
+
         public bool authenticate() {
             try {
                 WindowsLiveResponse response = refresh_live_token (refresh_token);
@@ -91,9 +98,9 @@ namespace XboxWebApi.Authentication {
 
         private XToken authenticate_xsts (UserToken user_token) throws Error {
             var session = new Soup.Session ();
-        	
+
             Soup.Logger logger = new Soup.Logger (Soup.LoggerLogLevel.BODY, -1);	
-	        session.add_feature (logger);
+            session.add_feature (logger);
 
             var url = build_xsts_authenticate_url();
             var request_data = new XSTSRequest.with_tokens(user_token).to_json();
@@ -109,13 +116,13 @@ namespace XboxWebApi.Authentication {
         }
 
         private string build_xsts_authenticate_url () {
-            URI uri = new URI (WindowsLiveConstants.XSTS_AUTH_URL);
-            uri.set_path (WindowsLiveConstants.XSTS_AUTH_AUTHENTICATE_PATH);
+            URI uri = new URI (WindowsLiveConstants.XSTS_AUTH_SERVICE_URL);
+            uri.set_path (WindowsLiveConstants.XSTS_AUTH_AUTHORIZE_PATH);
             return uri.to_string(false);
         }
 
         private string build_user_authenticate_url () {
-            URI uri = new URI(WindowsLiveConstants.USER_AUTH_URL);
+            URI uri = new URI(WindowsLiveConstants.USER_AUTH_SERVICE_URL);
             uri.set_path(WindowsLiveConstants.USER_AUTH_AUTHENTICATE_PATH);
             return uri.to_string(false);
         }
@@ -127,11 +134,5 @@ namespace XboxWebApi.Authentication {
             return uri.to_string(false);
         }
 
-        public static string get_authentication_url () {
-            URI uri = new URI(WindowsLiveConstants.LOGIN_SERVICE_URL);
-            uri.set_path(WindowsLiveConstants.LOGIN_AUTHORIZE_PATH);
-            uri.set_query_from_form(new WindowsLiveAuthenticationQuery().get_query());
-            return uri.to_string(false);
-        }
     }
 }
