@@ -25,6 +25,11 @@ sources = files(
     'src/Authentication/Token/RefreshToken.vala',
     'src/Authentication/Token/UserToken.vala',
     'src/Authentication/Token/XToken.vala',
+    'src/Api/XblLanguage.vala',
+    'src/Api/XblConfiguration.vala',
+    'src/Api/XblApiClient.vala',
+    'src/Api/XblService.vala',
+    'src/Api/Services/PresenceService.vala'
 )
 
 include_dir = include_directories('.')
