@@ -34,7 +34,7 @@ namespace XboxWebApi.Authentication.Model {
             get; private set; default = new DateTime.now ();
         }
 
-        public WindowsLiveResponse.from_query (HashTable<string,string> query_params) {
+        public WindowsLiveResponse.from_query (HashTable<weak string, weak string> query_params) {
             creation_time = new DateTime.now ();
             expires_in = int.parse (query_params["expires_in"]);
             access_token = query_params["access_token"];
