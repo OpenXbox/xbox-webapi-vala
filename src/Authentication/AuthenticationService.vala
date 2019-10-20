@@ -59,6 +59,7 @@ namespace XboxWebApi.Authentication {
                 refresh_token = new RefreshToken.from_windows_live_response (response);
                 user_token = authenticate_xasua(access_token);
                 x_token = authenticate_xsts (user_token);
+                user_information = x_token.user_information;
                 return true;
             } catch (Error e) {
                 debug ("ERROR: %s", e.message);
